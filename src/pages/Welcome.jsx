@@ -71,6 +71,12 @@ function GenrePicker({ options, saved }) {
     }
   }
 
+  // Leave without saving; fall back to Home if this page was opened directly.
+  function onBack() {
+    if (window.history.state?.idx > 0) navigate(-1)
+    else navigate('/')
+  }
+
   async function onContinue() {
     setSaving(true)
     setSaveError(null)
@@ -113,9 +119,16 @@ function GenrePicker({ options, saved }) {
         <p className="status-msg error" role="alert">Your genres were not saved. {saveError.message.replace(/\.$/, '')}. Try again.</p>
       )}
 
-      <button type="button" className="btn-primary" disabled={!ready || saving} onClick={onContinue}>
-        {saving ? 'Saving…' : 'Continue'}
-      </button>
+      <div className="welcome-actions">
+        {saved.length === MAX_GENRES && (
+          <button type="button" className="btn-ghost" disabled={saving} onClick={onBack}>
+            Back
+          </button>
+        )}
+        <button type="button" className="btn-primary" disabled={!ready || saving} onClick={onContinue}>
+          {saving ? 'Saving…' : 'Continue'}
+        </button>
+      </div>
     </>
   )
 }
